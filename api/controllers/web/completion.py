@@ -33,6 +33,7 @@ from services.errors.llm import InvokeRateLimitError
 
 
 # define completion api for user
+# 对话处理入口
 class CompletionApi(WebApiResource):
     def post(self, app_model, end_user):
         if app_model.mode != "completion":

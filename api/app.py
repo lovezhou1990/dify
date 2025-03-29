@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 def is_db_command():
     if len(sys.argv) > 1 and sys.argv[0].endswith("flask") and sys.argv[1] == "db":
         return True
@@ -36,6 +35,7 @@ else:
 
     app = create_app()
     celery = app.extensions["celery"]
+    celery.conf.broker_transport_options = {'visibility_timeout': 1186400}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
