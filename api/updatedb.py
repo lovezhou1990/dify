@@ -1,6 +1,7 @@
 from flask import Flask
-from flask_migrate import Migrate,upgrade
+from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy()
 
 def create_app():

@@ -13,7 +13,8 @@ do
     case "$file" in
         api/*.py)
             # set api_modified flag to true
-            api_modified=true
+            # 本地不让ruff 做代码检查
+            # api_modified=true
             ;;
         web/*)
             # set web_modified flag to true

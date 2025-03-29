@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 from celery.bin.celery import main as celery_main
 
 if (flask_debug := os.environ.get("FLASK_DEBUG", "0")) and flask_debug.lower() in {"false", "0", "no"}:
