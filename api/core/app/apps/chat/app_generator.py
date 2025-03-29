@@ -84,7 +84,7 @@ class ChatAppGenerator(MessageBasedAppGenerator):
         query = args["query"]
         if not isinstance(query, str):
             raise ValueError("query must be a string")
-
+        # query是输入的问题？
         query = query.replace("\x00", "")
         inputs = args["inputs"]
 
