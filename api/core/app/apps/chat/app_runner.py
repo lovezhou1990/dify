@@ -74,7 +74,7 @@ class ChatAppRunner(AppRunner):
             files=files,
             query=query,
         )
-
+        # 开始处理消息记忆内容
         memory = None
         if application_generate_entity.conversation_id:
             # get memory of conversation (read-only)
@@ -88,6 +88,7 @@ class ChatAppRunner(AppRunner):
         # organize all inputs and template to prompt messages
         # Include: prompt template, inputs, query(optional), files(optional)
         #          memory(optional)
+        # 提示词信息
         prompt_messages, stop = self.organize_prompt_messages(
             app_record=app_record,
             model_config=application_generate_entity.model_conf,
@@ -101,7 +102,7 @@ class ChatAppRunner(AppRunner):
 
         # moderation
         try:
-            # process sensitive_word_avoidance
+            # process sensitive_word_avoidance  处理 敏感词回避
             _, inputs, query = self.moderation_for_inputs(
                 app_id=app_record.id,
                 tenant_id=app_config.tenant_id,
@@ -156,7 +157,7 @@ class ChatAppRunner(AppRunner):
                 query=query,
             )
 
-        # get context from datasets
+        # get context from datasets  rag 知识库检索的处理
         context = None
         if app_config.dataset and app_config.dataset.dataset_ids:
             hit_callback = DatasetIndexToolCallbackHandler(
@@ -182,7 +183,7 @@ class ChatAppRunner(AppRunner):
                 message_id=message.id,
                 inputs=inputs,
             )
-
+        # 合并 提示词 + 知识库 + 外部数据
         # reorganize all inputs and template to prompt messages
         # Include: prompt template, inputs, query(optional), files(optional)
         #          memory(optional), external data, dataset context(optional)
@@ -198,7 +199,7 @@ class ChatAppRunner(AppRunner):
             image_detail_config=image_detail_config,
         )
 
-        # check hosting moderation
+        # check hosting moderation 
         hosting_moderation_result = self.check_hosting_moderation(
             application_generate_entity=application_generate_entity,
             queue_manager=queue_manager,
@@ -218,7 +219,7 @@ class ChatAppRunner(AppRunner):
         )
 
         db.session.close()
-
+        #调用大模型  LLM 的处理
         invoke_result = model_instance.invoke_llm(
             prompt_messages=prompt_messages,
             model_parameters=application_generate_entity.model_conf.parameters,

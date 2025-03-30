@@ -158,7 +158,7 @@ class DatasetRetrieval:
             retrieve_config.metadata_filtering_conditions,
             inputs,
         )
-
+        # 知识库检索
         all_documents = []
         user_from = "account" if invoke_from in {InvokeFrom.EXPLORE, InvokeFrom.DEBUGGER} else "end_user"
         if retrieve_config.retrieve_strategy == DatasetRetrieveConfigEntity.RetrieveStrategy.SINGLE:

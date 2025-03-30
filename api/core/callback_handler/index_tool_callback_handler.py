@@ -11,7 +11,7 @@ from models.model import DatasetRetrieverResource
 
 class DatasetIndexToolCallbackHandler:
     """Callback handler for dataset tool."""
-
+    # 知识库的检索
     def __init__(
         self, queue_manager: AppQueueManager, app_id: str, message_id: str, user_id: str, invoke_from: InvokeFrom
     ) -> None:

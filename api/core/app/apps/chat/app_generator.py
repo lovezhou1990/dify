@@ -71,7 +71,7 @@ class ChatAppGenerator(MessageBasedAppGenerator):
     ) -> Union[Mapping[str, Any], Generator[Mapping[str, Any] | str, None, None]]:
         """
         Generate App response.
-
+        聊天助手：生成器入口
         :param app_model: App
         :param user: account or end user
         :param args: request args
@@ -91,6 +91,7 @@ class ChatAppGenerator(MessageBasedAppGenerator):
         extras = {"auto_generate_conversation_name": args.get("auto_generate_name", True)}
 
         # get conversation
+        # 这个是从数据库里查出来的？  是什么东西
         conversation = None
         conversation_id = args.get("conversation_id")
         if conversation_id:
@@ -126,7 +127,7 @@ class ChatAppGenerator(MessageBasedAppGenerator):
         else:
             file_objs = []
 
-        # convert to app config
+        # 获取app配置
         app_config = ChatAppConfigManager.get_app_config(
             app_model=app_model,
             app_model_config=app_model_config,
@@ -134,10 +135,10 @@ class ChatAppGenerator(MessageBasedAppGenerator):
             override_config_dict=override_model_config_dict,
         )
 
-        # get tracing instance
+        # get tracing instance  跟踪实例
         trace_manager = TraceQueueManager(app_id=app_model.id)
 
-        # init application generate entity
+        # init application generate entity  初始化应用生成实体
         application_generate_entity = ChatAppGenerateEntity(
             task_id=str(uuid.uuid4()),
             app_config=app_config,
@@ -157,10 +158,10 @@ class ChatAppGenerator(MessageBasedAppGenerator):
             stream=streaming,
         )
 
-        # init generate records
+        # init generate records 
         (conversation, message) = self._init_generate_records(application_generate_entity, conversation)
 
-        # init queue manager
+        # init queue manager  消息队列（这里应该是就一个消息实体？）
         queue_manager = MessageBasedAppQueueManager(
             task_id=application_generate_entity.task_id,
             user_id=application_generate_entity.user_id,
@@ -170,7 +171,7 @@ class ChatAppGenerator(MessageBasedAppGenerator):
             message_id=message.id,
         )
 
-        # new thread
+        # new thread  在工作线程运行最终的 RAG 
         worker_thread = threading.Thread(
             target=self._generate_worker,
             kwargs={
@@ -216,12 +217,14 @@ class ChatAppGenerator(MessageBasedAppGenerator):
         with flask_app.app_context():
             try:
                 # get conversation and message
+                # 这里是一个新的线程了， 数据更新操作 都操作对应的队列？
                 conversation = self._get_conversation(conversation_id)
                 message = self._get_message(message_id)
                 if message is None:
                     raise MessageNotExistsError("Message not exists")
 
                 # chatbot app
+                # 真正处理消息的地方， 
                 runner = ChatAppRunner()
                 runner.run(
                     application_generate_entity=application_generate_entity,

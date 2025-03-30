@@ -279,7 +279,7 @@ class ExternalDatasetService:
             "knowledge_id": external_knowledge_binding.external_knowledge_id,
             "metadata_condition": metadata_condition.model_dump() if metadata_condition else None,
         }
-
+        # 真正检索知识库的地方，  （外部知识库？）
         response = ExternalDatasetService.process_external_api(
             ExternalKnowledgeApiSetting(
                 url=f"{settings.get('endpoint')}/retrieval",

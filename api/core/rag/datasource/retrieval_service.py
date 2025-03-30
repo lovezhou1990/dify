@@ -51,8 +51,8 @@ class RetrievalService:
 
         all_documents: list[Document] = []
         exceptions: list[str] = []
-
-        # Optimize multithreading with thread pools
+        # 真正处理知识库检索的地方  
+        # Optimize multithreading with thread pools  通过线程池优化多线程
         with ThreadPoolExecutor(max_workers=dify_config.RETRIEVAL_SERVICE_EXECUTORS) as executor:  # type: ignore
             futures = []
             if retrieval_method == "keyword_search":
@@ -68,6 +68,7 @@ class RetrievalService:
                         document_ids_filter=document_ids_filter,
                     )
                 )
+            # 嵌入式搜索  向量搜索结果返回处理
             if RetrievalMethod.is_support_semantic_search(retrieval_method):
                 futures.append(
                     executor.submit(
@@ -100,6 +101,7 @@ class RetrievalService:
                         document_ids_filter=document_ids_filter,
                     )
                 )
+            # 线程搜索结果 futures>
             concurrent.futures.wait(futures, timeout=30, return_when=concurrent.futures.ALL_COMPLETED)
 
         if exceptions:
@@ -177,7 +179,7 @@ class RetrievalService:
                 dataset = cls._get_dataset(dataset_id)
                 if not dataset:
                     raise ValueError("dataset not found")
-
+                # 处理向量搜索
                 vector = Vector(dataset=dataset)
                 documents = vector.search_by_vector(
                     query,
